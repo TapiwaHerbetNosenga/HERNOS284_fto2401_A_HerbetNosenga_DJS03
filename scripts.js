@@ -27,7 +27,7 @@ for (const { author, id, image, title } of matches.slice(0, BOOKS_PER_PAGE)) {
 
 document.querySelector('[data-list-items]').appendChild(starting)
 
-const genreHtml = document.createDocumentFragment()
+/*const genreHtml = document.createDocumentFragment()
 const firstGenreElement = document.createElement('option')
 firstGenreElement.value = 'any'
 firstGenreElement.innerText = 'All Genres'
@@ -55,7 +55,30 @@ for (const [id, name] of Object.entries(authors)) {
     authorsHtml.appendChild(element)
 }
 
-document.querySelector('[data-search-authors]').appendChild(authorsHtml)
+document.querySelector('[data-search-authors]').appendChild(authorsHtml)*/
+//the following function abstracts the process of making an option form list out of an object
+
+const createOption = (title, objectName, Title )=>{
+    const objectHtml = document.createDocumentFragment(); //creates another document fragment to store html elements
+    const firstObjectElement = document.createElement('option');
+    firstObjectElement.value = 'any'; 
+    firstObjectElement.innerText = `All ${title}`;
+    objectHtml.appendChild(firstObjectElement);
+
+
+    //the following function iterates over the property and value of each genre key-value pair and sets the key as the value of the created option element and the value as the display text for the created option element before appending it to the doc.frag. 
+for (const [id, name] of Object.entries(objectName)) {
+    const element = document.createElement('option');
+    element.value = id; //.value represents the hidden information that is the actual data store in the option, meta information in a way
+    element.innerText = name; 
+    objectHtml.appendChild(element);
+}
+
+document.querySelector(`[data-search-${Title}]`).appendChild(objectHtml); //similar to line 30
+}
+
+createOption("Genres", genres, "genres");
+createOption("Authors", authors, "authors");
 
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     document.querySelector('[data-settings-theme]').value = 'night'
@@ -109,20 +132,20 @@ document.querySelector('[data-settings-form]').addEventListener('submit', (event
         document.documentElement.style.setProperty('--color-light', '255, 255, 255');
     }
     
-    document.querySelector('[data-settings-overlay]').open = false
+    document.querySelector('[data-settings-overlay]').open = false;
 })
 
 document.querySelector('[data-search-form]').addEventListener('submit', (event) => {
-    event.preventDefault()
-    const formData = new FormData(event.target)
-    const filters = Object.fromEntries(formData)
-    const result = []
+    event.preventDefault();
+    const formData = new FormData(event.target); //creates a key value pair with the name and value of the form element
+    const filters = Object.fromEntries(formData); //turns the key value pair into an object
+    const result = [];
 
-    for (const book of books) {
-        let genreMatch = filters.genre === 'any'
+    for (const book of books) {  //this loop iterates over  each book object  in the books array and checks if they match teh provided genre taken from the form value and then pushes it to an array that will display every book object returned to teh page
+        let genreMatch = filters.genre === 'any';
 
         for (const singleGenre of book.genres) {
-            if (genreMatch) break;
+            if (genreMatch) break; //if genreMatch resolves to false, meaning no genre was given then break the code
             if (singleGenre === filters.genre) { genreMatch = true }
         }
 
